@@ -1,0 +1,42 @@
+//
+// Prefix header for all source files of the 'Manga Out' target in the 'Manga Out' project
+//
+
+#import <Availability.h>
+
+#ifndef __IPHONE_4_3
+#warning "This project uses features only available in iOS SDK 4.3 and later."
+#endif
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+    #import <CoreData/CoreData.h>
+    #import "NSDate.h"
+#endif
+
+#define DOMAINE @"manganext.chaufourier.fr"
+//#define DOMAINE @"192.168.1.45/opsone/manga_www"
+#define DOMAINEURI @"http://"DOMAINE
+
+
+#define NEWBOOKSURI @"/services/books?method=getNew&format=json&key=ea5af636cd2c0c07242ee43c07cbefb3&v=1"
+#define FUTUREBOOKSURI @"/services/books?method=getFuture&format=json&key=ea5af636cd2c0c07242ee43c07cbefb3&v=1"
+
+//#define NEWBOOKSURI @"http://"DOMAINE@"/services/books?method=getNew&format=json&key=ea5af636cd2c0c07242ee43c07cbefb3&v=1"
+//#define FUTUREBOOKSURI @"http://"DOMAINE@"/services/books?method=getFuture&format=json&key=ea5af636cd2c0c07242ee43c07cbefb3&v=1"
+
+#define NEW 1
+#define FUTURE 2
+#define SIGNET 3
+#define SUBSCRIPTION 4
+
+#define IMAGES_CACHE_DIRECTORY @"images"
+#define THUMBNAILS_CACHE_DIRECTORY @"images/thumbnails"
+#define SUBSCRIPTION_FILE @"subscription.txt"
+
+#define NOTIFICATION_SUBSCRIPTION_MODIFIED @"notificationsubscriptionmodified"
+
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_6_0
+#endif

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PreferenceSpecifiers</key>
+	<array>
+		<dict>
+			<key>Title</key>
+			<string>Conception et réalisation :</string>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+		</dict>
+        <dict>
+			<key>DefaultValue</key>
+			<string>Jérémy Chaufourier</string>
+			<key>Key</key>
+			<string>developer_preference</string>
+			<key>Title</key>
+			<string></string>
+			<key>Type</key>
+			<string>PSTitleValueSpecifier</string>
+		</dict>
+        <dict>
+			<key>Title</key>
+			<string>Réalisation graphique :</string>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+		</dict>
+        <dict>
+			<key>DefaultValue</key>
+			<string>Aurélien Pougeois</string>
+			<key>Key</key>
+			<string>graphic_preference</string>
+			<key>Title</key>
+			<string></string>
+			<key>Type</key>
+			<string>PSTitleValueSpecifier</string>
+		</dict>
+        <dict>
+			<key>Title</key>
+			<string>Sponsor :</string>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+		</dict>
+        <dict>
+			<key>DefaultValue</key>
+			<string>Société Opsone</string>
+			<key>Key</key>
+			<string>sponsor_preference</string>
+			<key>Title</key>
+			<string></string>
+			<key>Type</key>
+			<string>PSTitleValueSpecifier</string>
+		</dict>
+	</array>
+    <key>StringsTable</key>
+	<string>Root</string>
+</dict>
+</plist>
