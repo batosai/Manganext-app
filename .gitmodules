@@ -1,0 +1,9 @@
+[submodule "submodules/AFNetworking"]
+	path = submodules/AFNetworking
+	url = https://github.com/AFNetworking/AFNetworking.git
+[submodule "submodules/InAppSettingsKit"]
+	path = submodules/InAppSettingsKit
+	url = https://github.com/futuretap/InAppSettingsKit.git
+[submodule "submodules/JSONKit"]
+	path = submodules/JSONKit
+	url = https://github.com/johnezang/JSONKit.git
