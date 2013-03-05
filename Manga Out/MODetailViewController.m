@@ -7,7 +7,6 @@
 //
 
 #import "MODetailViewController.h"
-#import "MORootController.h"
 
 #import "MOSubscriptionDocument.h"
 
@@ -46,8 +45,6 @@
         imageView = [[UIImageView alloc] init];
         description = [[UITextView alloc] init];
         [description setEditable:NO];
-        
-        subscriptionDocument = [MOAppDelegate sharedAppDelegate].subscriptionDocument;
 
         [self.view addSubview:labelName];
         [self.view addSubview:labelNumber];
@@ -68,7 +65,7 @@
         [_book release];
         _book = [newBook retain];
 
-        [[MOAppDelegate sharedAppDelegate] loadSubscriptionDocument];
+        [[MOAppDelegate sharedAppDelegate].tracker trackView:[NSString stringWithFormat:@"Detail manga : %@", _book.name]];
 
         // Update the view.
         [self configureView];
@@ -180,8 +177,8 @@
     
     UIBarButtonItem *addButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addSignet:)] autorelease];
     self.navigationItem.rightBarButtonItem = addButton;
-    
-    if (![subscriptionDocument.dictionary objectForKey:_book.name]) {
+
+    if (![[MOAppDelegate sharedAppDelegate].subscriptionDocument.dictionary objectForKey:_book.name]) {
         self.navigationItem.rightBarButtonItem.enabled = YES;
     }
     else {
@@ -204,17 +201,17 @@
 - (void)addSignet:(id)sender
 {
     //[_book createSignet];
-    [[[MOAppDelegate sharedAppDelegate] tabBarController] badgeRefresh];
 
-    [subscriptionDocument setBook:_book];
-    [subscriptionDocument saveToURL:[subscriptionDocument fileURL] forSaveOperation:UIDocumentSaveForCreating completionHandler:nil];
+    [[MOAppDelegate sharedAppDelegate].subscriptionDocument setBook:_book];
+    [[MOAppDelegate sharedAppDelegate].subscriptionDocument saveToURL:[[MOAppDelegate sharedAppDelegate].subscriptionDocument fileURL] forSaveOperation:UIDocumentSaveForCreating completionHandler:nil];
+
+
+    [[MOAppDelegate sharedAppDelegate].tracker trackEventWithCategory:@"Bouton"
+                                                           withAction:@"Ajouter un abonnement"
+                                                            withLabel:_book.name
+                                                            withValue:nil];
 
     self.navigationItem.rightBarButtonItem.enabled = NO;
-}
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
 }
 
 - (void)viewDidAppear:(BOOL)animated

@@ -235,7 +235,12 @@
             keys = @[];
         }
 
-        predicate = [NSPredicate predicateWithFormat:@"(published_at > %@) AND name IN %@", [NSDate date], keys];
+        NSDateComponents *dateComponent = [[[NSDateComponents alloc] init] autorelease];
+        [dateComponent setDay:-1];
+        
+        NSDate *date = [[NSCalendar currentCalendar] dateByAddingComponents:dateComponent toDate:[NSDate date] options:0];
+
+        predicate = [NSPredicate predicateWithFormat:@"(published_at > %@) AND name IN %@", date, keys];
         sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"published_at" ascending:YES];
     }
 

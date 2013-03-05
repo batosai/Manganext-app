@@ -18,6 +18,14 @@
     return (MOAppDelegate *) [UIApplication sharedApplication].delegate;
 }
 
+#ifdef DEBUG
+static NSString *const kAnalyticsAccountId = ANALYTICS_ACCOUND_ID_DEBUG;
+static const NSInteger kDispatchPeriodSeconds = ANALYTICS_DISPACH_PERIOD_SECONDS_DEBUG;
+#else
+static NSString *const kAnalyticsAccountId = ANALYTICS_ACCOUND_ID_PROD;
+static const NSInteger kDispatchPeriodSeconds = ANALYTICS_DISPACH_PERIOD_SECONDS_PROD;
+#endif
+
 @synthesize window = _window;
 @synthesize managedObjectContext = __managedObjectContext;
 @synthesize managedObjectModel = __managedObjectModel;
@@ -33,10 +41,16 @@
 
     [self cacheDir];
     [self loadSubscriptionDocument];
+    [self tracking];
 
     [[UIApplication sharedApplication]
      registerForRemoteNotificationTypes:(UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound)];
     application.applicationIconBadgeNumber = 0;
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+               selector:@selector(userDefaultsChanged:)
+                   name:NSUserDefaultsDidChangeNotification
+                 object:nil];
     
     _window.rootViewController = _tabBarController;
     [_window makeKeyAndVisible];
@@ -45,23 +59,46 @@
 
 - (void)loadSubscriptionDocument
 {
-    NSURL *ubiq = [[NSFileManager defaultManager] URLForUbiquityContainerIdentifier:nil];
-    if (ubiq) {
-        NSLog(@"iCloud access at %@", ubiq);
-        [self loadDocument];
+#if !TARGET_IPHONE_SIMULATOR
+    if ( [[NSUserDefaults standardUserDefaults] objectForKey:@"icloud_preference"] == nil || [[NSUserDefaults standardUserDefaults] boolForKey:@"icloud_preference"] ) {
+        NSURL *ubiq = [[NSFileManager defaultManager] URLForUbiquityContainerIdentifier:nil];
+        if (ubiq) {
+            NSLog(@"iCloud access at %@", ubiq);
+            [self.tracker trackEventWithCategory:@"iCloud"
+                                      withAction:@"Stockage"
+                                       withLabel:@"Activer"
+                                       withValue:nil];
+            
+            [self loadDocument];
+        }
+        useIcloud = YES;
     }
+    else {
+#endif
+        [self.tracker trackEventWithCategory:@"iCloud"
+                                  withAction:@"Stockage"
+                                   withLabel:@"Desactiver"
+                                   withValue:nil];
 
-//    NSString *path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
-//    NSString *filePath = [NSString stringWithFormat:@"%@/%@",path, SUBSCRIPTION_FILE];
-//    NSURL *url = [NSURL fileURLWithPath:filePath];
-//
-//    _subscriptionDocument = [[MOSubscriptionDocument alloc] initWithFileURL:url];
-//    
-//    [_subscriptionDocument openWithCompletionHandler:^(BOOL success) {
-//        if (success) {
-//            NSLog(@"%@", _subscriptionDocument.dictionary);
-//        }
-//    }];
+        NSString *path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
+        NSString *filePath = [NSString stringWithFormat:@"%@/%@",path, SUBSCRIPTION_FILE];
+        NSURL *url = [NSURL fileURLWithPath:filePath];
+        useIcloud = NO;
+
+        _subscriptionDocument = [[MOSubscriptionDocument alloc] initWithFileURL:url];
+
+        [_subscriptionDocument openWithCompletionHandler:^(BOOL success) {
+            if (success) {
+                [_tabBarController badgeRefresh];
+                //NSLog(@"%@", _subscriptionDocument.dictionary);
+            }
+            else {
+                [self cacheSubscription];
+            }
+        }];
+#if !TARGET_IPHONE_SIMULATOR
+    }
+#endif
 }
 
 - (void)cacheDir
@@ -84,6 +121,34 @@
     }
 }
 
+- (void)cacheSubscription{
+    // cache subscription mode iCloud disable.
+    NSString *path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
+    NSString *filePath = [NSString stringWithFormat:@"%@/%@",path, SUBSCRIPTION_FILE];
+    NSFileManager *fileManager= [NSFileManager defaultManager];
+    BOOL isDir = NO;
+
+    if(![fileManager fileExistsAtPath:filePath isDirectory:&isDir]) {
+        [_subscriptionDocument saveToURL:[_subscriptionDocument fileURL] forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
+            if(!useIcloud && success) {
+                [self loadSubscriptionDocument];
+            }
+        }];
+    }
+}
+
+- (void)tracking
+{
+    // Optional: automatically track uncaught exceptions with Google Analytics.
+    [GAI sharedInstance].trackUncaughtExceptions = YES;
+    // Optional: set Google Analytics dispatch interval to e.g. 20 seconds.
+    [GAI sharedInstance].dispatchInterval = kDispatchPeriodSeconds;
+    // Optional: set debug to YES for extra debugging information.
+    [GAI sharedInstance].debug = NO;
+    // Create tracker instance.
+    self.tracker = [[GAI sharedInstance] trackerWithTrackingId:kAnalyticsAccountId];
+}
+
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
     [_subscriptionDocument closeWithCompletionHandler:^(BOOL success) {
@@ -95,7 +160,6 @@
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
-    [_tabBarController badgeRefresh];
     application.applicationIconBadgeNumber = 0;
 
     [self loadSubscriptionDocument];
@@ -106,6 +170,66 @@
     /*
      Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
      */
+}
+
+#pragma mark - notification center
+
+- (void)userDefaultsChanged:(NSNotification *)notification {
+#if !TARGET_IPHONE_SIMULATOR
+    //NSLog(@"%@", [defaults dictionaryRepresentation]);
+
+    NSUserDefaults *defaults = (NSUserDefaults *)[notification object];
+    NSDictionary *dictionnary = [_subscriptionDocument.dictionary copy];
+    NSArray *keys = [dictionnary allKeys];
+    NSURL *url;
+
+    
+    if ([defaults boolForKey:@"icloud_preference"] && !useIcloud) {
+        NSURL *ubiq = [[NSFileManager defaultManager] URLForUbiquityContainerIdentifier:nil];
+        url = [[ubiq URLByAppendingPathComponent:@"Documents"] URLByAppendingPathComponent:SUBSCRIPTION_FILE];
+    }
+    else if (![defaults boolForKey:@"icloud_preference"] && useIcloud) {
+        NSString *path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
+        NSString *filePath = [NSString stringWithFormat:@"%@/%@",path, SUBSCRIPTION_FILE];
+        url = [NSURL fileURLWithPath:filePath];
+    }
+    
+    if ( ([defaults boolForKey:@"icloud_preference"] && !useIcloud) ||
+        (![defaults boolForKey:@"icloud_preference"] && useIcloud) ) {
+        [_subscriptionDocument release];
+        _subscriptionDocument = nil;
+        _subscriptionDocument = [[MOSubscriptionDocument alloc] initWithFileURL:url];
+
+        [_subscriptionDocument openWithCompletionHandler:^(BOOL success) {
+            if (success) {
+                
+                if (![defaults boolForKey:@"icloud_preference"]) {
+                    _subscriptionDocument.dictionary = nil;
+                    _subscriptionDocument.dictionary = [NSMutableDictionary dictionaryWithDictionary:dictionnary];
+                }
+                else {
+                    for (NSString *key in keys) {
+                        if(![_subscriptionDocument.dictionary objectForKey:key]) {
+                            [_subscriptionDocument.dictionary setObject:[dictionnary objectForKey:key] forKey:key];
+                        }
+                    }
+                }
+
+                [_tabBarController badgeRefresh];
+
+                [_subscriptionDocument saveToURL:[_subscriptionDocument fileURL] forSaveOperation:UIDocumentSaveForCreating completionHandler:nil];
+            }
+        }];
+
+        useIcloud = !useIcloud;
+
+        [self.tracker trackEventWithCategory:@"iCloud"
+                                  withAction:@"Stockage"
+                                   withLabel:@"status"
+                                   withValue:[NSNumber numberWithBool:useIcloud]];
+    }
+
+#endif
 }
 
 #pragma mark - iCloud
@@ -139,7 +263,7 @@
     _query = nil;
     
 	[self loadData:query];
-    
+
 }
 
 - (void)loadData:(NSMetadataQuery *)query {
@@ -151,6 +275,7 @@
 
         [_subscriptionDocument openWithCompletionHandler:^(BOOL success) {
             if (success) {
+                [_tabBarController badgeRefresh];
                 NSLog(@"iCloud document opened");
             } else {
                 NSLog(@"failed opening document from iCloud");
@@ -166,14 +291,14 @@
         [_subscriptionDocument saveToURL:[_subscriptionDocument fileURL] forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
             if (success) {
                 [_subscriptionDocument openWithCompletionHandler:^(BOOL success) {
-                    
+                    [_tabBarController badgeRefresh];
                     NSLog(@"new document opened from iCloud");
                     
                 }];
             }
         }];
     }
-    
+
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(processStateDocChange:)
                                                  name:UIDocumentStateChangedNotification

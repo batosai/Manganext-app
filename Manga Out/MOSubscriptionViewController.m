@@ -7,6 +7,8 @@
 //
 
 #import "MOSubscriptionViewController.h"
+#import "MOAppDelegate.h"
+#import "MOSubscriptionDocument.h"
 #import "MOSubscriptionManagementViewController.h"
 #import "MOBaseNavivationViewController.h"
 
@@ -30,6 +32,7 @@
         managedButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose
                                                                                    target:self
                                                                                    action:@selector(managedSubscriptionPressed)];
+        self.navigationItem.rightBarButtonItem = managedButton;
     }
     return self;
 }
@@ -37,6 +40,11 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [[MOAppDelegate sharedAppDelegate].tracker trackView:@"Liste des abonnements"];
 }
 
 #pragma mark - Table view data source
@@ -48,13 +56,6 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if ([_books.books count] && self.navigationItem.rightBarButtonItem == nil) {
-        self.navigationItem.rightBarButtonItem = managedButton;
-    }
-    else if(![_books.books count]) {
-        self.navigationItem.rightBarButtonItem = nil;
-    }
-    
     return [_books.books count] ? [_books.books count] : 1;
 }
 

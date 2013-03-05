@@ -16,9 +16,9 @@
 @synthesize subscriptionNavigationController = _subscriptionNavigationController;
 @synthesize settingsNavigationController = _settingsNavigationController;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (id)init
 {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    self = [super init];
     if (self) {
         newBooksTableViewController = [[[MOTableViewController alloc] init] autorelease];
         newBooksTableViewController.title = NSLocalizedString(@"Nouveautes", nil);
@@ -36,10 +36,15 @@
         subscriptionTableViewController.title = NSLocalizedString(@"Ma liste", nil);
         subscriptionTableViewController.type = SUBSCRIPTION;
 
-        appSettingsViewController = [[IASKAppSettingsViewController alloc] initWithNibName:@"IASKAppSettingsView" bundle:nil];
+        appSettingsViewController = [[IASKAppSettingsViewController alloc] init];
 		appSettingsViewController.delegate = self;
         appSettingsViewController.showDoneButton = NO;
         appSettingsViewController.title = NSLocalizedString(@"Parametres", @"Parametres");
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(badgeRefresh)
+                                                     name:NOTIFICATION_SUBSCRIPTION_MODIFIED_DICTIONARY
+                                                   object:nil];
 
         
         //-----------------
@@ -62,7 +67,7 @@
 
         _subscriptionNavigationController = [[MONavivationViewController alloc] initWithRootViewController:subscriptionTableViewController];
 
-        UITabBarItem *tabItem3 = [[UITabBarItem alloc] initWithTitle:nil image:[UIImage imageNamed:@"signet"] tag:3];//signetViewController.title
+        UITabBarItem *tabItem3 = [[UITabBarItem alloc] initWithTitle:nil image:[UIImage imageNamed:@"alignJust"] tag:3];//signetViewController.title
 
         _subscriptionNavigationController.tabBarItem = tabItem3;
 
@@ -76,8 +81,6 @@
 
         //-----------------
 
-        [self badgeRefresh];
-        
         self.viewControllers = [NSArray arrayWithObjects:_newBooksNavigationController, _futureBooksNavigationController, _subscriptionNavigationController, _settingsNavigationController, nil];
         
         //self.tabBar.tintColor = [UIColor greenColor];
@@ -100,8 +103,10 @@
 
 - (void)badgeRefresh
 {
-    //books = [[MOBooks alloc] initWithManagedObjectContext:[[MOAppDelegate sharedAppDelegate] managedObjectContext] andType:SIGNET];
-    //[self badgeValue:[books getCountSignetToday]];
+    books = [[MOBooks alloc] initWithManagedObjectContext:[[MOAppDelegate sharedAppDelegate] managedObjectContext] andType:SUBSCRIPTION];
+
+    [books filterByObject:[MOAppDelegate sharedAppDelegate].subscriptionDocument.dictionary];
+    [self badgeValue:[books getCountSignetToday]];
 }
 
 - (void)badgeValue:(NSUInteger) badge
@@ -120,10 +125,20 @@
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Effacer toutes les données", @"") message:nil delegate:self cancelButtonTitle:NSLocalizedString(@"Annuler", @"") otherButtonTitles:NSLocalizedString(@"Supprimer", @""), nil];
         [alert show];
         [alert release];
+        
+        [[MOAppDelegate sharedAppDelegate].tracker trackEventWithCategory:@"Button"
+                                                               withAction:@"Reinitialiser"
+                                                                withLabel:@"Reinitialiser"
+                                                                withValue:nil];
 
 	}
     else if ([key isEqualToString:@"ButtonNoteAction"]) {
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://itunes.apple.com/us/app/manga-next/id524486749?mt=8&ign-mpt=uo%3D4"]];
+
+        [[MOAppDelegate sharedAppDelegate].tracker trackEventWithCategory:@"Button"
+                                                               withAction:@"Noter app"
+                                                                withLabel:@"Noter app"
+                                                                withValue:nil];
     }
 }
 

@@ -68,6 +68,16 @@
 			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
 		</dict>
+        <dict>
+			<key>Key</key>
+			<string>icloud_preference</string>
+			<key>DefaultValue</key>
+			<true/>
+			<key>Title</key>
+			<string>Synchronisation iCloud</string>
+			<key>Type</key>
+			<string>PSToggleSwitchSpecifier</string>
+		</dict>
 	</array>
 	<key>StringsTable</key>
 	<string>Root</string>

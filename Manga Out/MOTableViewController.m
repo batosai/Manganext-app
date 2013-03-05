@@ -56,8 +56,14 @@
 //    [allDownloads makeObjectsPerformSelector:@selector(cancelDownload)];
 //}
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
+- (void)viewWillAppear:(BOOL)animated
+{
+    if (_type == NEW) {
+        [[MOAppDelegate sharedAppDelegate].tracker trackView:@"Liste des nouveautés"];
+    }
+    else {
+        [[MOAppDelegate sharedAppDelegate].tracker trackView:@"Liste des prochaines sorties"];
+    }
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {

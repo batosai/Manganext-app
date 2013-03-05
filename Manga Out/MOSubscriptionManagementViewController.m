@@ -50,6 +50,11 @@
     return self;
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [[MOAppDelegate sharedAppDelegate].tracker trackView:@"Liste gestion des abonnements"];
+}
+
 - (MOBaseNavivationViewController *)navigationController {
     if (navigationController == nil) {
         navigationController = [[MOBaseNavivationViewController alloc] initWithRootViewController:self];
@@ -94,6 +99,11 @@
         [[MOAppDelegate sharedAppDelegate].subscriptionDocument deleteAtKey:[items objectAtIndex:indexPath.row]];
         [items removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        
+        [[MOAppDelegate sharedAppDelegate].tracker trackEventWithCategory:@"Bouton"
+                                                               withAction:@"Ajouter un abonnement"
+                                                                withLabel:[items objectAtIndex:indexPath.row]
+                                                                withValue:nil];
     }
 }
 

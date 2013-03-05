@@ -49,7 +49,7 @@
     if (!_dictionary) {
         _dictionary = [NSMutableDictionary dictionary];
     }
-    
+
     if (![_dictionary objectForKey:book.name]) {
 
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
@@ -61,6 +61,7 @@
                                 };
         [_dictionary setValue:dictionary forKey:book.name];
     }
+    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_SUBSCRIPTION_MODIFIED_DICTIONARY object:self];
 }
 
 - (void)deleteBook:(Book *)book
@@ -74,6 +75,7 @@
         [_dictionary removeObjectForKey:key];
         [self saveToURL:[self fileURL] forSaveOperation:UIDocumentSaveForCreating completionHandler:nil];
     }
+    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_SUBSCRIPTION_MODIFIED_DICTIONARY object:self];
 }
 
 @end

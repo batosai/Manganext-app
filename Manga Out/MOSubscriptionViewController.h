@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MOAppDelegate.h"
 #import "MODetailViewController.h"
 #import "MOViewCell.h"
 #import "MOBooks.h"

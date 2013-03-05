@@ -8,13 +8,17 @@
 
 #import <UIKit/UIKit.h>
 #import <AudioToolbox/AudioToolbox.h>
+#import "GAI.h"
 
 @class MORootController, MOSubscriptionDocument;
 
-@interface MOAppDelegate : UIResponder <UIApplicationDelegate, UITabBarControllerDelegate>
+@interface MOAppDelegate : UIResponder <UIApplicationDelegate, UITabBarControllerDelegate> {
+    BOOL useIcloud;
+}
 
 @property (strong, nonatomic) UIWindow *window;
 
+@property (nonatomic, retain) id<GAITracker> tracker;
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;

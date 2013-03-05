@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "PullRefreshTableViewController.h"
+#import "MOAppDelegate.h"
 #import "MODetailViewController.h"
 #import "MOThumbnailDownloader.h"
 #import "MOViewCell.h"

@@ -11,6 +11,7 @@
 #import "MOTableViewController.h"
 #import "MOAppDelegate.h"
 //#import "MOSignetViewController.h"
+#import "MOSubscriptionDocument.h"
 #import "MOSubscriptionViewController.h"
 #import "MONavivationViewController.h"
 #import "IASKAppSettingsViewController.h"

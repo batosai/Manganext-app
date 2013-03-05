@@ -11,9 +11,8 @@
 #import "MOAppDelegate.h"
 
 #import "Book.h"
-#import "Signet.h"
+//#import "Signet.h"
 
-@class MOSubscriptionDocument;
 
 @interface MODetailViewController : UIViewController <ADBannerViewDelegate> {
     UILabel *labelName;
@@ -28,8 +27,6 @@
 
     BOOL bannerIsVisible;
     ADBannerView *bannerView;
-    
-    MOSubscriptionDocument *subscriptionDocument;
 }
 
 @property (strong, nonatomic) Book *book;
