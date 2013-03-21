@@ -60,17 +60,19 @@ static const NSInteger kDispatchPeriodSeconds = ANALYTICS_DISPACH_PERIOD_SECONDS
 - (void)loadSubscriptionDocument
 {
 #if !TARGET_IPHONE_SIMULATOR
-    if ( [[NSUserDefaults standardUserDefaults] objectForKey:@"icloud_preference"] == nil || [[NSUserDefaults standardUserDefaults] boolForKey:@"icloud_preference"] ) {
-        NSURL *ubiq = [[NSFileManager defaultManager] URLForUbiquityContainerIdentifier:nil];
-        if (ubiq) {
-            NSLog(@"iCloud access at %@", ubiq);
-            [self.tracker trackEventWithCategory:@"iCloud"
-                                      withAction:@"Stockage"
-                                       withLabel:@"Activer"
-                                       withValue:nil];
-            
-            [self loadDocument];
-        }
+    NSURL *ubiq = [[NSFileManager defaultManager] URLForUbiquityContainerIdentifier:nil];
+    if (
+        ([[NSUserDefaults standardUserDefaults] objectForKey:@"icloud_preference"] == nil || [[NSUserDefaults standardUserDefaults] boolForKey:@"icloud_preference"])
+        && ubiq) {
+
+        NSLog(@"iCloud access at %@", ubiq);
+        [self.tracker trackEventWithCategory:@"iCloud"
+                                  withAction:@"Stockage"
+                                   withLabel:@"Activer"
+                                   withValue:nil];
+
+        [self loadDocument];
+
         useIcloud = YES;
     }
     else {
@@ -91,6 +93,7 @@ static const NSInteger kDispatchPeriodSeconds = ANALYTICS_DISPACH_PERIOD_SECONDS
             if (success) {
                 [_tabBarController badgeRefresh];
                 //NSLog(@"%@", _subscriptionDocument.dictionary);
+                [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"icloud_preference"];
             }
             else {
                 [self cacheSubscription];
@@ -161,6 +164,8 @@ static const NSInteger kDispatchPeriodSeconds = ANALYTICS_DISPACH_PERIOD_SECONDS
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
     application.applicationIconBadgeNumber = 0;
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_REFRESH object:self];
 
     [self loadSubscriptionDocument];
 }

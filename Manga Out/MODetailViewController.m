@@ -189,10 +189,22 @@
         description.frame = CGRectMake(5, imageView.frame.size.height + 20, width+130, 400);
     }
     else if ([[UIScreen mainScreen] bounds].size.height == 568) {//iphone5
-        description.frame = CGRectMake(5, imageView.frame.size.height + 20, width+130, 235);
+        if (bannerIsVisible)
+        {
+            description.frame = CGRectMake(5, imageView.frame.size.height + 20, width+130, 280-50);
+        }
+        else {
+            description.frame = CGRectMake(5, imageView.frame.size.height + 20, width+130, 280);
+        }
     }
     else {
-        description.frame = CGRectMake(5, imageView.frame.size.height + 20, width+130, 155);
+        if (bannerIsVisible)
+        {
+            description.frame = CGRectMake(5, imageView.frame.size.height + 20, width+130, 190-50);
+        }
+        else {
+            description.frame = CGRectMake(5, imageView.frame.size.height + 20, width+130, 190);
+        }
     }
 
     description.text = _book.text;
@@ -267,9 +279,11 @@
 {
     if (!bannerIsVisible)
     {
+        CGRect frame = description.frame;
+        frame.size.height -= banner.frame.size.height;
         [UIView beginAnimations:@"animateAdBannerOn" context:NULL];
         banner.frame = CGRectOffset(banner.frame, 0, -banner.frame.size.height);
-
+        description.frame = frame;
         [UIView commitAnimations];
         bannerIsVisible = YES;
     }
@@ -279,14 +293,12 @@
 {
     if (bannerIsVisible)
     {
+        CGRect frame = description.frame;
+        frame.size.height += banner.frame.size.height;
         [UIView beginAnimations:@"animateAdBannerOff" context:NULL];
         // banner is visible and we move it out of the screen, due to connection issue
-        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-            banner.frame = CGRectOffset(banner.frame, 0, -50);
-        }
-        else {
-            banner.frame = CGRectOffset(banner.frame, 0, -66);
-        }
+        banner.frame = CGRectOffset(banner.frame, 0, banner.frame.size.height);
+        description.frame = frame;
         [UIView commitAnimations];
         bannerIsVisible = NO;
     }

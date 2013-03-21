@@ -97,13 +97,14 @@
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         [[MOAppDelegate sharedAppDelegate].subscriptionDocument deleteAtKey:[items objectAtIndex:indexPath.row]];
-        [items removeObjectAtIndex:indexPath.row];
-        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
-        
+
         [[MOAppDelegate sharedAppDelegate].tracker trackEventWithCategory:@"Bouton"
-                                                               withAction:@"Ajouter un abonnement"
+                                                               withAction:@"Supprimer un abonnement"
                                                                 withLabel:[items objectAtIndex:indexPath.row]
                                                                 withValue:nil];
+
+        [items removeObjectAtIndex:indexPath.row];
+        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }
 }
 

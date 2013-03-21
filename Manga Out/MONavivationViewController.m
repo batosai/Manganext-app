@@ -34,7 +34,26 @@
         _managedObjectContext = [[MOAppDelegate sharedAppDelegate] managedObjectContext];
     }
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(refresh)
+                                                 name:NOTIFICATION_REFRESH
+                                               object:nil];
+
+    
     return self;
+}
+
+- (void)refresh {
+    
+    if ([self.visibleViewController class] == [MOTableViewController class]) {
+        tableViewController.books = [[MOBooks alloc] initWithManagedObjectContext:_managedObjectContext andType:tableViewController.type];
+
+        if ( [[NSUserDefaults standardUserDefaults] objectForKey:@"autoload_preference"] == nil || [[NSUserDefaults standardUserDefaults] boolForKey:@"autoload_preference"]) {
+            tableViewController.tableView.contentOffset = CGPointMake(0, -1 * tableViewController.tableView.tableHeaderView.frame.size.height);
+            [tableViewController startLoading];
+            [tableViewController refresh];
+        }
+    }
 }
 
 - (void)dealloc
@@ -57,13 +76,7 @@
 {
     if (tableViewController != nil && ![tableViewController.books.books count])
     {
-        tableViewController.books = [[MOBooks alloc] initWithManagedObjectContext:_managedObjectContext andType:tableViewController.type];
-
-        if ( [[NSUserDefaults standardUserDefaults] objectForKey:@"autoload_preference"] == nil || [[NSUserDefaults standardUserDefaults] boolForKey:@"autoload_preference"]) {
-            tableViewController.tableView.contentOffset = CGPointMake(0, -1 * tableViewController.tableView.tableHeaderView.frame.size.height);
-            [tableViewController startLoading];
-            [tableViewController refresh];
-        }
+        [self refresh];
     }
     else if (subscriptionTableViewController != nil)
     {
@@ -207,12 +220,7 @@
     {NSLog(@"error");
         [UIView beginAnimations:@"animateAdBannerOff" context:NULL];
         // banner is visible and we move it out of the screen, due to connection issue
-        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-            banner.frame = CGRectOffset(banner.frame, 0, 50);
-        }
-        else {
-            banner.frame = CGRectOffset(banner.frame, 0, 66);
-        }
+        banner.frame = CGRectOffset(banner.frame, 0, banner.frame.size.height);
         [UIView commitAnimations];
         bannerIsVisible = NO;
     }

@@ -40,7 +40,7 @@
         _searchBar.delegate = self;
         _searchBar.tintColor = [UIColor orangeColor];
         _searchBar.placeholder = NSLocalizedString(@"Recherche", @"Recherche");
-        
+
         self.tableView.tableHeaderView = _searchBar;
     }
 
@@ -185,14 +185,14 @@
     id dictionary;
     NSString *stringUrl = _type == NEW ? NEWBOOKSURI : FUTUREBOOKSURI;
 
-    id last_update = [self.books lastUpdate];
+    /*id last_update = [self.books lastUpdate];
 
     if (last_update) {
         dictionary = [NSDictionary dictionaryWithObject:last_update forKey:@"updated_at"];
     }
-    else {
+    else {*/
         dictionary = nil;
-    }
+    //}
 
     [[AFAPIClient sharedClient] getPath:stringUrl parameters:dictionary success:^(AFHTTPRequestOperation *operation, id JSON) {
 

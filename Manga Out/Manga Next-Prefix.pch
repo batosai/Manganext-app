@@ -38,6 +38,7 @@
 #define NOTIFICATION_SUBSCRIPTION_MODIFIED @"notificationsubscriptionmodified"
 #define NOTIFICATION_SUBSCRIPTION_MODIFIED_DICTIONARY @"notificationsubscriptionmodifieddictionary"
 #define NOTIFICATION_BADGE @"notificationbadge"
+#define NOTIFICATION_REFRESH @"notificationrefresh"
 
 
 //GAI
