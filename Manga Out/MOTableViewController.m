@@ -40,6 +40,9 @@
         _searchBar.delegate = self;
         _searchBar.tintColor = [UIColor orangeColor];
         _searchBar.placeholder = NSLocalizedString(@"Recherche", @"Recherche");
+        
+        UITextField *searchtextfield = [_searchBar.subviews objectAtIndex:1];
+        searchtextfield.clearButtonMode = UITextFieldViewModeWhileEditing;
 
         self.tableView.tableHeaderView = _searchBar;
     }
@@ -153,6 +156,9 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    
+    if (![_books.books count]) return;
+    
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         
         Book *book = [_books.books objectAtIndex:indexPath.row];

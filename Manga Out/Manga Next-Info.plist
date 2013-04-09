@@ -16,6 +16,8 @@
 			<array>
 				<string>icn.png</string>
 				<string>icn@2x.png</string>
+				<string>icn~ipad.png</string>
+				<string>icn@2x~ipad.png</string>
 			</array>
 			<key>UIPrerenderedIcon</key>
 			<true/>
