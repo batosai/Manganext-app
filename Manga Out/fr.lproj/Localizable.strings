@@ -1,6 +1,6 @@
 "Nouveautes" = "Nouveautés";
 "Prochainement" = "Prochainement";
-"Mes selections" = "Mes sélections";
+"Liste d'achat" = "Liste d'achat";
 "Ma liste" = "Ma liste";
 "Parametres" = "Paramètres";
 
@@ -18,3 +18,7 @@
 "Supprimer" = "Supprimer";
 
 "Recherche" = "Recherche";
+
+"Bonjour, %@ %@ vient de sortir" = "Bonjour, %@ %@ vient de sortir";
+"Bonjour, %@ %@ sort le %@" = "Bonjour, %@ %@ sort le %@";
+"Bonjour, %@ %@ est sorti le %@" = "Bonjour, %@ %@ est sorti le %@";

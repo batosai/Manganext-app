@@ -1,231 +1,164 @@
 //
 //  MORootController.m
-//  Manga Out
+//  Manga Next
 //
-//  Created by Jérémy chaufourier on 12/02/12.
-//  Copyright (c) 2012 Jérémy Chaufourier. All rights reserved.
+//  Created by Jeremy on 06/05/13.
+//  Copyright (c) 2013 Jeremy Chaufourier. All rights reserved.
 //
 
 #import "MORootController.h"
+#import "MONavigationController.h"
+#import "MOHomeViewController.h"
+#import "MOBookViewController.h"
+#import "MOSignetViewController.h"
+#import "MOSubscriptionViewController.h"
+#import "IASKAppSettingsViewController.h"
+
+@interface MORootController ()
+
+@end
 
 @implementation MORootController
-
-@synthesize freshBooksNavigationController = _newBooksNavigationController;
-@synthesize futureBooksNavigationController = _futureBooksNavigationController;
-//@synthesize signetNavigationController = _signetNavigationController;
-@synthesize subscriptionNavigationController = _subscriptionNavigationController;
-@synthesize settingsNavigationController = _settingsNavigationController;
 
 - (id)init
 {
     self = [super init];
     if (self) {
-        newBooksTableViewController = [[[MOTableViewController alloc] init] autorelease];
-        newBooksTableViewController.title = NSLocalizedString(@"Nouveautes", nil);
-        newBooksTableViewController.type = NEW;
 
-        futureBooksTableViewController = [[[MOTableViewController alloc] init] autorelease];
-        futureBooksTableViewController.title = NSLocalizedString(@"Prochainement", nil);
-        futureBooksTableViewController.type = FUTURE;
-
-//        signetViewController = [[[MOSignetViewController alloc] init] autorelease];
-//        signetViewController.title = NSLocalizedString(@"Mes selections", nil);
-//        signetViewController.type = SIGNET;
-        
-        subscriptionTableViewController = [[[MOSubscriptionViewController alloc] init] autorelease];
-        subscriptionTableViewController.title = NSLocalizedString(@"Ma liste", nil);
-        subscriptionTableViewController.type = SUBSCRIPTION;
-
-        appSettingsViewController = [[IASKAppSettingsViewController alloc] init];
-		appSettingsViewController.delegate = self;
-        appSettingsViewController.showDoneButton = NO;
-        appSettingsViewController.title = NSLocalizedString(@"Parametres", @"Parametres");
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(badgeRefresh)
-                                                     name:NOTIFICATION_SUBSCRIPTION_MODIFIED_DICTIONARY
-                                                   object:nil];
-
-        
-        //-----------------
-
-        _newBooksNavigationController = [[MONavivationViewController alloc] initWithRootViewController:newBooksTableViewController];
-        
-        UITabBarItem *tabItem = [[UITabBarItem alloc] initWithTitle:nil image:[UIImage imageNamed:@"news"] tag:1];//_newBooksNavigationController.title
-        
-        _newBooksNavigationController.tabBarItem = tabItem;
-
-        //-----------------
-
-        _futureBooksNavigationController = [[MONavivationViewController alloc] initWithRootViewController:futureBooksTableViewController];
-        
-        UITabBarItem *tabItem2 = [[UITabBarItem alloc] initWithTitle:nil image:[UIImage imageNamed:@"future"] tag:2];//futureBooksTableViewController.title
-        
-        _futureBooksNavigationController.tabBarItem = tabItem2;
-        
-        //-----------------
-
-        _subscriptionNavigationController = [[MONavivationViewController alloc] initWithRootViewController:subscriptionTableViewController];
-
-        UITabBarItem *tabItem3 = [[UITabBarItem alloc] initWithTitle:nil image:[UIImage imageNamed:@"alignJust"] tag:3];//signetViewController.title
-
-        _subscriptionNavigationController.tabBarItem = tabItem3;
-
-        //-----------------
-
-        _settingsNavigationController = [[MONavivationViewController alloc] initWithRootViewController:appSettingsViewController];
-        
-        UITabBarItem *tabItem4 = [[UITabBarItem alloc] initWithTitle:nil image:[UIImage imageNamed:@"settings"] tag:2];//NSLocalizedString(@"Parametres", @"Parametres")
-        
-        _settingsNavigationController.tabBarItem = tabItem4;
-
-        //-----------------
-
-        self.viewControllers = [NSArray arrayWithObjects:_newBooksNavigationController, _futureBooksNavigationController, _subscriptionNavigationController, _settingsNavigationController, nil];
-        
-        //self.tabBar.tintColor = [UIColor greenColor];
-        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 5.0) {
-            self.tabBar.tintColor = [UIColor whiteColor];
-            self.tabBar.selectedImageTintColor = [UIColor whiteColor];
-            
-            UIImage* tabBarBackground = [UIImage imageNamed:@"tabbar"];
-            [[UITabBar appearance] setBackgroundImage:tabBarBackground];
-
-            [[UITabBar appearance] setSelectionIndicatorImage:[UIImage imageNamed:@"selection-tab"]];
-        }
-        
-        [tabItem release];
-        [tabItem2 release];
-        [tabItem3 release];
     }
     return self;
 }
 
-- (void)badgeRefresh
+- (void)viewDidLoad
 {
-    books = [[MOBooks alloc] initWithManagedObjectContext:[[MOAppDelegate sharedAppDelegate] managedObjectContext] andType:SUBSCRIPTION];
+    [super viewDidLoad];
 
-    [books filterByObject:[MOAppDelegate sharedAppDelegate].subscriptionDocument.dictionary];
-    [self badgeValue:[books getCountSignetToday]];
+    [self showViewAtIndex:0];
+    [self awesomeMenu];
 }
 
-- (void)badgeValue:(NSUInteger) badge
-{    
-    if (badge) {
-        _subscriptionNavigationController.tabBarItem.badgeValue = [NSString stringWithFormat:@"%i", badge];
+- (void)awesomeMenu {
+    UIImage *storyMenuItemImage = [UIImage imageNamed:@"bg-menuitem.png"];
+    UIImage *storyMenuItemImagePressed = [UIImage imageNamed:@"bg-menuitem-highlighted.png"];
+
+    AwesomeMenuItem *starMenuItem1 = [[AwesomeMenuItem alloc] initWithImage:storyMenuItemImage
+                                                           highlightedImage:storyMenuItemImagePressed
+                                                               ContentImage:[UIImage imageNamed:@"icon-home"]
+                                                    highlightedContentImage:nil];
+    AwesomeMenuItem *starMenuItem2 = [[AwesomeMenuItem alloc] initWithImage:storyMenuItemImage
+                                                           highlightedImage:storyMenuItemImagePressed
+                                                               ContentImage:[UIImage imageNamed:@"icon-new"]
+                                                    highlightedContentImage:nil];
+    AwesomeMenuItem *starMenuItem3 = [[AwesomeMenuItem alloc] initWithImage:storyMenuItemImage
+                                                           highlightedImage:storyMenuItemImagePressed
+                                                               ContentImage:[UIImage imageNamed:@"icon-future"]
+                                                    highlightedContentImage:nil];
+    AwesomeMenuItem *starMenuItem4 = [[AwesomeMenuItem alloc] initWithImage:storyMenuItemImage
+                                                           highlightedImage:storyMenuItemImagePressed
+                                                               ContentImage:[UIImage imageNamed:@"icon-list"]
+                                                    highlightedContentImage:nil];
+    AwesomeMenuItem *starMenuItem5 = [[AwesomeMenuItem alloc] initWithImage:storyMenuItemImage
+                                                           highlightedImage:storyMenuItemImagePressed
+                                                               ContentImage:[UIImage imageNamed:@"icon-signet"]
+                                                    highlightedContentImage:nil];
+    AwesomeMenuItem *starMenuItem6 = [[AwesomeMenuItem alloc] initWithImage:storyMenuItemImage
+                                                           highlightedImage:storyMenuItemImagePressed
+                                                               ContentImage:[UIImage imageNamed:@"icon-setting"]
+                                                    highlightedContentImage:nil];
+
+    NSArray *menus = [NSArray arrayWithObjects:starMenuItem1, starMenuItem2, starMenuItem3, starMenuItem4, starMenuItem5, starMenuItem6, nil];
+
+    menu = [[AwesomeMenu alloc] initWithFrame:self.view.bounds menus:menus];
+    menu.menuWholeAngle = M_PI/1.7;
+    menu.startPoint = CGPointMake(25.0, CGRectGetHeight(self.view.bounds) - 25);
+    menu.delegate = self;
+
+    [self.view insertSubview:menu atIndex:1];
+}
+
+- (void)showViewAtIndex:(NSUInteger)index {
+    [navigationHomeController.view removeFromSuperview];
+    [navigationNewBooksController.view removeFromSuperview];
+    [navigationFutureBooksController.view removeFromSuperview];
+    [navigationSignetController.view removeFromSuperview];
+    [navigationSubscriptionController.view removeFromSuperview];
+    [navigationAppSettingsController.view removeFromSuperview];
+
+    switch (index) {
+            case 0:
+            if (!navigationHomeController) {
+                MOHomeViewController *homeTableViewController = [[MOHomeViewController alloc] init];
+                homeTableViewController.title = NSLocalizedString(@"Manga Next", nil);
+
+                navigationHomeController = [[MONavigationController alloc] initWithRootViewController:homeTableViewController];
+                navigationHomeController.view.frame = self.view.bounds;
+            }
+            [self.view insertSubview:navigationHomeController.view atIndex:0];
+            break;
+        case 1:
+            if (!navigationNewBooksController) {
+                MOBookViewController *newBooksTableViewController = [[MOBookViewController alloc] init];
+                newBooksTableViewController.title = NSLocalizedString(@"Nouveautes", nil);
+                newBooksTableViewController.type = NEW;
+
+                navigationNewBooksController = [[MONavigationController alloc] initWithRootViewController:newBooksTableViewController];
+                navigationNewBooksController.view.frame = self.view.bounds;
+            }
+            [self.view insertSubview:navigationNewBooksController.view atIndex:0];
+            break;
+        default:
+        case 2:
+            if (!navigationFutureBooksController) {
+                MOBookViewController *futureBooksTableViewController = [[MOBookViewController alloc] init];
+                futureBooksTableViewController.title = NSLocalizedString(@"Prochainement", nil);
+                futureBooksTableViewController.type = FUTURE;
+
+                navigationFutureBooksController = [[MONavigationController alloc] initWithRootViewController:futureBooksTableViewController];
+                navigationFutureBooksController.view.frame = self.view.bounds;
+            }
+            [self.view insertSubview:navigationFutureBooksController.view atIndex:0];
+            break;
+        case 3:
+            if (!navigationSubscriptionController) {
+                MOSubscriptionViewController *subscriptionTableViewController = [[MOSubscriptionViewController alloc] init];
+                subscriptionTableViewController.title = NSLocalizedString(@"Ma liste", nil);
+                subscriptionTableViewController.type = SUBSCRIPTION;
+
+                navigationSubscriptionController = [[MONavigationController alloc] initWithRootViewController:subscriptionTableViewController];
+                navigationSubscriptionController.view.frame = self.view.bounds;
+            }
+            [self.view insertSubview:navigationSubscriptionController.view atIndex:0];
+            break;
+        case 4:
+            if (!navigationSignetController) {
+                MOSignetViewController *signetTableViewController = [[MOSignetViewController alloc] init];
+                signetTableViewController.title = NSLocalizedString(@"Liste d'achat", nil);
+                signetTableViewController.type = SIGNET;
+
+                navigationSignetController = [[MONavigationController alloc] initWithRootViewController:signetTableViewController];
+                navigationSignetController.view.frame = self.view.bounds;
+            }
+            [self.view insertSubview:navigationSignetController.view atIndex:0];
+            break;
+        case 5:
+            if (!navigationAppSettingsController) {
+                IASKAppSettingsViewController *appSettingsViewController = [[IASKAppSettingsViewController alloc] init];
+//                appSettingsViewController.delegate = self;
+                appSettingsViewController.showDoneButton = NO;
+                appSettingsViewController.title = NSLocalizedString(@"Parametres", @"Parametres");
+
+                navigationAppSettingsController = [[MONavigationController alloc] initWithRootViewController:appSettingsViewController];
+                navigationAppSettingsController.view.frame = self.view.bounds;
+            }
+            [self.view insertSubview:navigationAppSettingsController.view atIndex:0];
+            break;
     }
-    else {
-        _subscriptionNavigationController.tabBarItem.badgeValue = nil;
-    }
 }
 
-- (void)settingsViewController:(IASKAppSettingsViewController*)sender buttonTappedForKey:(NSString*)key {
-	if ([key isEqualToString:@"ButtonSettingsAction"]) {
-        
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Effacer toutes les données", @"") message:nil delegate:self cancelButtonTitle:NSLocalizedString(@"Annuler", @"") otherButtonTitles:NSLocalizedString(@"Supprimer", @""), nil];
-        [alert show];
-        [alert release];
-        
-        [[MOAppDelegate sharedAppDelegate].tracker trackEventWithCategory:@"Button"
-                                                               withAction:@"Reinitialiser"
-                                                                withLabel:@"Reinitialiser"
-                                                                withValue:nil];
+#pragma delegate
 
-	}
-    else if ([key isEqualToString:@"ButtonNoteAction"]) {
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://itunes.apple.com/us/app/manga-next/id524486749?mt=8&ign-mpt=uo%3D4"]];
-
-        [[MOAppDelegate sharedAppDelegate].tracker trackEventWithCategory:@"Button"
-                                                               withAction:@"Noter app"
-                                                                withLabel:@"Noter app"
-                                                                withValue:nil];
-    }
-}
-
-- (void)alertView:(UIAlertView *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
-    // the user clicked one of the OK/Cancel buttons
-    if (buttonIndex == 0)
-    {
-        //NSLog(@"annuler");
-    }
-    else
-    {
-        [[[MOBooks alloc] initWithManagedObjectContext:[[MOAppDelegate sharedAppDelegate] managedObjectContext]]deleteBooks];
-
-        newBooksTableViewController.books = nil;
-        [newBooksTableViewController.imageDownloadsInProgress removeAllObjects];
-        [newBooksTableViewController.tableView reloadData];
-
-        futureBooksTableViewController.books = nil;
-        [futureBooksTableViewController.imageDownloadsInProgress removeAllObjects];
-        [futureBooksTableViewController.tableView reloadData];
-
-        subscriptionTableViewController.books = nil;
-        [subscriptionTableViewController.tableView reloadData];
-        
-        [_newBooksNavigationController popViewControllerAnimated:YES];
-        [_futureBooksNavigationController popViewControllerAnimated:YES];
-        [_settingsNavigationController popViewControllerAnimated:YES];
-
-    }
-}
-
-- (void)didReceiveMemoryWarning
-{
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc that aren't in use.
-}
-
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-    [newBooksTableViewController release];
-    newBooksTableViewController = nil;
-    [futureBooksTableViewController release];
-    futureBooksTableViewController = nil;
-    [subscriptionTableViewController release];
-    subscriptionTableViewController = nil;
-    [IASKAppSettingsViewController release];
-
-    [splitForNewBooksViewController release];
-    splitForNewBooksViewController = nil;
-    [splitForFutureBooksViewController release];
-    splitForFutureBooksViewController = nil;
-
-    [_newBooksNavigationController release];
-    _newBooksNavigationController = nil;
-    [_futureBooksNavigationController release];
-    _futureBooksNavigationController = nil;
-    [_subscriptionNavigationController release];
-    _subscriptionNavigationController = nil;
-    [_settingsNavigationController release];
-    _settingsNavigationController = nil;
-}
-
-- (void)dealloc
-{
-    [super dealloc];
-    [newBooksTableViewController release];
-    [futureBooksTableViewController release];
-    [subscriptionTableViewController release];
-    [IASKAppSettingsViewController release];
-
-    [_newBooksNavigationController release];
-    [_subscriptionNavigationController release];
-    [_futureBooksNavigationController release];
-    [_settingsNavigationController release];
-    [books release];
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-        return (interfaceOrientation == UIInterfaceOrientationPortrait);
-    }
-    return YES;
-    //return UIInterfaceOrientationIsLandscape(interfaceOrientation);
+- (void)AwesomeMenu:(AwesomeMenu *)menu didSelectIndex:(NSInteger)idx {
+    [self showViewAtIndex:idx];
 }
 
 @end

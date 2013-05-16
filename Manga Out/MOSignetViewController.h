@@ -1,20 +1,13 @@
 //
 //  MOSignetViewController.h
-//  Manga Out
+//  Manga Next
 //
-//  Created by Jérémy chaufourier on 26/03/12.
-//  Copyright (c) 2012 Jérémy Chaufourier. All rights reserved.
+//  Created by Jeremy on 09/05/13.
+//  Copyright (c) 2013 Jeremy Chaufourier. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-#import "MODetailViewController.h"
-#import "MOViewCell.h"
-#import "MOBooks.h"
+#import "MOBookViewController.h"
 
-@interface MOSignetViewController : UITableViewController
-
-@property (assign) NSUInteger type;
-@property (nonatomic, retain) MOBooks *books;
-@property (strong, nonatomic) MODetailViewController *detailViewController;
+@interface MOSignetViewController : MOBookViewController
 
 @end

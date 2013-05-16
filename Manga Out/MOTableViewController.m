@@ -8,7 +8,7 @@
 #import "MOTableViewController.h"
 #import "MOBaseNavivationViewController.h"
 
-#import "AFAPIClient.h"
+#import "MOAPIClient.h"
 
 @interface MOTableViewController ()
 - (void)startIconDownload:(Book *)book forIndexPath:(NSIndexPath *)indexPath;
@@ -200,7 +200,7 @@
         dictionary = nil;
     //}
 
-    [[AFAPIClient sharedClient] getPath:stringUrl parameters:dictionary success:^(AFHTTPRequestOperation *operation, id JSON) {
+    [[MOAPIClient sharedClient] getPath:stringUrl parameters:dictionary success:^(AFHTTPRequestOperation *operation, id JSON) {
 
         NSDictionary *dictionary = [NSDictionary dictionaryWithDictionary:JSON];
 

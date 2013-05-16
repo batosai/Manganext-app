@@ -7,16 +7,18 @@
 //
 
 #import "MOAppDelegate.h"
+#import "MOIncrementalStore.h"
 #import "MORootController.h"
-#import "MONotifications.h"
+//#import "MONotifications.h"
 #import "MOSubscriptionDocument.h"
+
+#import "GPPSignIn.h"
+#import "GPPURLHandler.h"
+
 
 @implementation MOAppDelegate
 
-+ (MOAppDelegate *)sharedAppDelegate
-{
-    return (MOAppDelegate *) [UIApplication sharedApplication].delegate;
-}
+static NSString * const kClientID = GPP_APIKEY;
 
 #ifdef DEBUG
 static NSString *const kAnalyticsAccountId = ANALYTICS_ACCOUND_ID_DEBUG;
@@ -27,22 +29,29 @@ static const NSInteger kDispatchPeriodSeconds = ANALYTICS_DISPACH_PERIOD_SECONDS
 #endif
 
 @synthesize window = _window;
+@synthesize rootController = _rootController;
+
 @synthesize managedObjectContext = __managedObjectContext;
 @synthesize managedObjectModel = __managedObjectModel;
 @synthesize persistentStoreCoordinator = __persistentStoreCoordinator;
-@synthesize tabBarController = _tabBarController;
+
 @synthesize subscriptionDocument = _subscriptionDocument;
 @synthesize query = _query;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    _window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    _tabBarController = [[MORootController alloc] init];
+    [GPPSignIn sharedInstance].clientID = kClientID;
 
-    [self cacheDir];
+    NSURLCache *URLCache = [[NSURLCache alloc] initWithMemoryCapacity:8 * 1024 * 1024 diskCapacity:20 * 1024 * 1024 diskPath:nil];
+    [NSURLCache setSharedURLCache:URLCache];
+
+    _window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    _window.backgroundColor = [UIColor colorWithHexString:@"#ffb650"];
+    _rootController = [[MORootController alloc] init];
+
     [self loadSubscriptionDocument];
     [self tracking];
-
+/*
     [[UIApplication sharedApplication]
      registerForRemoteNotificationTypes:(UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound)];
     application.applicationIconBadgeNumber = 0;
@@ -51,10 +60,21 @@ static const NSInteger kDispatchPeriodSeconds = ANALYTICS_DISPACH_PERIOD_SECONDS
                selector:@selector(userDefaultsChanged:)
                    name:NSUserDefaultsDidChangeNotification
                  object:nil];
-    
-    _window.rootViewController = _tabBarController;
+  */
+    _window.rootViewController = _rootController;
     [_window makeKeyAndVisible];
+
+    // Read Google+ deep-link data.
+    [GPPDeepLink setDelegate:self];
+    [GPPDeepLink readDeepLinkAfterInstall];
     return YES;
+}
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+    NSLog(@"%@", sourceApplication);
+    return [GPPURLHandler handleURL:url
+                  sourceApplication:sourceApplication
+                         annotation:annotation];
 }
 
 - (void)loadSubscriptionDocument
@@ -91,7 +111,6 @@ static const NSInteger kDispatchPeriodSeconds = ANALYTICS_DISPACH_PERIOD_SECONDS
 
         [_subscriptionDocument openWithCompletionHandler:^(BOOL success) {
             if (success) {
-                [_tabBarController badgeRefresh];
                 //NSLog(@"%@", _subscriptionDocument.dictionary);
                 [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"icloud_preference"];
             }
@@ -102,26 +121,6 @@ static const NSInteger kDispatchPeriodSeconds = ANALYTICS_DISPACH_PERIOD_SECONDS
 #if !TARGET_IPHONE_SIMULATOR
     }
 #endif
-}
-
-- (void)cacheDir
-{
-    NSString *path = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject];
-
-    NSString *dirImage = [NSString stringWithFormat:@"%@/%@", path, IMAGES_CACHE_DIRECTORY];
-    NSString *dirThumbnails = [NSString stringWithFormat:@"%@/%@", path, THUMBNAILS_CACHE_DIRECTORY];
-
-    NSFileManager *fileManager= [NSFileManager defaultManager];
-    BOOL isDir = YES;
-    NSError *error;
-    
-    if(![fileManager fileExistsAtPath:dirImage isDirectory:&isDir]) {
-        if([fileManager createDirectoryAtPath:dirImage withIntermediateDirectories:YES attributes:nil error:&error]) {
-            if(![fileManager fileExistsAtPath:dirThumbnails isDirectory:&isDir]) {
-                [fileManager createDirectoryAtPath:dirThumbnails withIntermediateDirectories:YES attributes:nil error:&error];
-            }
-        }
-    }
 }
 
 - (void)cacheSubscription{
@@ -170,13 +169,6 @@ static const NSInteger kDispatchPeriodSeconds = ANALYTICS_DISPACH_PERIOD_SECONDS
     [self loadSubscriptionDocument];
 }
 
-- (void)applicationDidBecomeActive:(UIApplication *)application
-{
-    /*
-     Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-     */
-}
-
 #pragma mark - notification center
 
 - (void)userDefaultsChanged:(NSNotification *)notification {
@@ -201,7 +193,6 @@ static const NSInteger kDispatchPeriodSeconds = ANALYTICS_DISPACH_PERIOD_SECONDS
     
     if ( ([defaults boolForKey:@"icloud_preference"] && !useIcloud) ||
         (![defaults boolForKey:@"icloud_preference"] && useIcloud) ) {
-        [_subscriptionDocument release];
         _subscriptionDocument = nil;
         _subscriptionDocument = [[MOSubscriptionDocument alloc] initWithFileURL:url];
 
@@ -219,8 +210,6 @@ static const NSInteger kDispatchPeriodSeconds = ANALYTICS_DISPACH_PERIOD_SECONDS
                         }
                     }
                 }
-
-                [_tabBarController badgeRefresh];
 
                 [_subscriptionDocument saveToURL:[_subscriptionDocument fileURL] forSaveOperation:UIDocumentSaveForCreating completionHandler:nil];
             }
@@ -280,7 +269,6 @@ static const NSInteger kDispatchPeriodSeconds = ANALYTICS_DISPACH_PERIOD_SECONDS
 
         [_subscriptionDocument openWithCompletionHandler:^(BOOL success) {
             if (success) {
-                [_tabBarController badgeRefresh];
                 NSLog(@"iCloud document opened");
             } else {
                 NSLog(@"failed opening document from iCloud");
@@ -296,9 +284,7 @@ static const NSInteger kDispatchPeriodSeconds = ANALYTICS_DISPACH_PERIOD_SECONDS
         [_subscriptionDocument saveToURL:[_subscriptionDocument fileURL] forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
             if (success) {
                 [_subscriptionDocument openWithCompletionHandler:^(BOOL success) {
-                    [_tabBarController badgeRefresh];
                     NSLog(@"new document opened from iCloud");
-                    
                 }];
             }
         }];
@@ -363,6 +349,10 @@ static const NSInteger kDispatchPeriodSeconds = ANALYTICS_DISPACH_PERIOD_SECONDS
 
 #pragma mark - Core Data stack
 
+- (void)applicationWillTerminate:(UIApplication *)application {
+    [self saveContext];
+}
+
 - (void)saveContext
 {
     NSError *error = nil;
@@ -379,17 +369,17 @@ static const NSInteger kDispatchPeriodSeconds = ANALYTICS_DISPACH_PERIOD_SECONDS
 
 // Returns the managed object context for the application.
 // If the context doesn't already exist, it is created and bound to the persistent store coordinator for the application.
-- (NSManagedObjectContext *)managedObjectContext
-{
+- (NSManagedObjectContext *)managedObjectContext {
     if (__managedObjectContext != nil) {
         return __managedObjectContext;
     }
-    
+
     NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
     if (coordinator != nil) {
-        __managedObjectContext = [[NSManagedObjectContext alloc] init];
+        __managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
         [__managedObjectContext setPersistentStoreCoordinator:coordinator];
     }
+
     return __managedObjectContext;
 }
 
@@ -412,42 +402,27 @@ static const NSInteger kDispatchPeriodSeconds = ANALYTICS_DISPACH_PERIOD_SECONDS
     if (__persistentStoreCoordinator != nil) {
         return __persistentStoreCoordinator;
     }
-    
-    NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"manga-out.sqlite"];
-    
-    NSError *error = nil;
+
     __persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
-    if (![__persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]) {
-        /*
-         Replace this implementation with code to handle the error appropriately.
-         
-         abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
-         
-         Typical reasons for an error here include:
-         * The persistent store is not accessible;
-         * The schema for the persistent store is incompatible with current managed object model.
-         Check the error message to determine what the actual problem was.
-         
-         
-         If the persistent store is not accessible, there is typically something wrong with the file path. Often, a file URL is pointing into the application's resources directory instead of a writeable directory.
-         
-         If you encounter schema incompatibility errors during development, you can reduce their frequency by:
-         * Simply deleting the existing store:
-         [[NSFileManager defaultManager] removeItemAtURL:storeURL error:nil]
-         
-         * Performing automatic lightweight migration by passing the following dictionary as the options parameter: */
-         NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption, [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
 
-         /*Lightweight migration will only work for a limited set of schema changes; consult "Core Data Model Versioning and Data Migration Programming Guide" for details.*/
+    AFIncrementalStore *incrementalStore = (AFIncrementalStore *)[__persistentStoreCoordinator addPersistentStoreWithType:[MOIncrementalStore type] configuration:nil URL:nil options:nil error:nil];
 
-        if (![__persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error]) {
-            
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-            
-            abort();
-        }
-    }    
-    
+    NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"manga-out.sqlite"];
+
+
+    NSDictionary *options = @{
+        NSInferMappingModelAutomaticallyOption : @(YES),
+        NSMigratePersistentStoresAutomaticallyOption: @(YES)
+    };
+
+    NSError *error = nil;
+    if (![incrementalStore.backingPersistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error]) {
+        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        abort();
+    }
+
+    NSLog(@"SQLite URL: %@", storeURL);
+
     return __persistentStoreCoordinator;
 }
 
@@ -471,9 +446,8 @@ static const NSInteger kDispatchPeriodSeconds = ANALYTICS_DISPACH_PERIOD_SECONDS
  * Fetch and Format Device Token and Register Important Information to Remote Server
  */
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)devToken {
-	
 #if !TARGET_IPHONE_SIMULATOR
-    [[[MONotifications alloc] initNotificationsWithDeviceToken:devToken] autorelease];
+//    [[[MONotifications alloc] initNotificationsWithDeviceToken:devToken] autorelease];
 #endif
 }
 
@@ -483,9 +457,7 @@ static const NSInteger kDispatchPeriodSeconds = ANALYTICS_DISPACH_PERIOD_SECONDS
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
 	
 #if !TARGET_IPHONE_SIMULATOR
-	
 	NSLog(@"Error in registration. Error: %@", error);
-	
 #endif
 }
 
@@ -495,8 +467,7 @@ static const NSInteger kDispatchPeriodSeconds = ANALYTICS_DISPACH_PERIOD_SECONDS
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
 	
 #if !TARGET_IPHONE_SIMULATOR
-    
-	NSLog(@"remote notification: %@",[userInfo description]);
+/*	NSLog(@"remote notification: %@",[userInfo description]);
 	NSDictionary *apsInfo = [userInfo objectForKey:@"aps"];
 	
 	NSString *alert = [apsInfo objectForKey:@"alert"];
@@ -508,27 +479,21 @@ static const NSInteger kDispatchPeriodSeconds = ANALYTICS_DISPACH_PERIOD_SECONDS
 
 	NSString *badge = [apsInfo objectForKey:@"badge"];
 	NSLog(@"Received Push Badge: %@", badge);
-	application.applicationIconBadgeNumber = [badge integerValue];
-	
+	application.applicationIconBadgeNumber = [badge integerValue];*/
 #endif
 }
 
-/* 
- * --------------------------------------------------------------------------------------------------------------
- *  END APNS CODE 
- * --------------------------------------------------------------------------------------------------------------
- */
+#pragma Delegate - GPPDeepLinkDelegate
 
-- (void)dealloc
-{
-    [_window release];
-    [_subscriptionDocument release];
-    [_query release];
-
-    [__managedObjectContext release];
-    [__managedObjectModel release];
-    [__persistentStoreCoordinator release];
-    [super dealloc];
+- (void)didReceiveDeepLink:(GPPDeepLink *)deepLink {
+    // An example to handle the deep link data.
+    UIAlertView *alert = [[UIAlertView alloc]
+                          initWithTitle:@"Deep-link Data"
+                          message:[deepLink deepLinkID]
+                          delegate:nil
+                          cancelButtonTitle:@"OK"
+                          otherButtonTitles:nil];
+    [alert show];
 }
 
 @end

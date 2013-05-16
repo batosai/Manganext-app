@@ -7,34 +7,30 @@
 //
 
 #import "MOSubscriptionManagementViewController.h"
-#import "MOBaseNavivationViewController.h"
 #import "MOAppDelegate.h"
 #import "MOSubscriptionDocument.h"
 
 @interface MOSubscriptionManagementViewController () {
     NSMutableArray *items;
-    MOBaseNavivationViewController *navigationController;
 }
-
-@property (nonatomic, retain) MOBaseNavivationViewController *navigationController;
 
 @end
 
 @implementation MOSubscriptionManagementViewController
 
-@synthesize navigationController = _navigationController;
-
 - (id)init
 {
     self = [super init];
     if (self) {
+
+        MOAppDelegate *appDelegate = (MOAppDelegate *)[[UIApplication sharedApplication] delegate];
+
         self.navigationItem.rightBarButtonItem = self.editButtonItem;
 
-        NSArray *keys = [[[MOAppDelegate sharedAppDelegate].subscriptionDocument.dictionary allKeys] copy];
+        NSArray *keys = [[appDelegate.subscriptionDocument.dictionary allKeys] copy];
         
         if ([keys count]) {
             items = [NSMutableArray arrayWithArray:keys];
-            [items retain];
         }
         else {
             items = NSMutableArray.new;
@@ -45,23 +41,14 @@
                                                                                       action:@selector(cancelPressed)];
         self.navigationItem.leftBarButtonItem = cancelButton;
         
-        [keys release];
     }
     return self;
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    [[MOAppDelegate sharedAppDelegate].tracker trackView:@"Liste gestion des abonnements"];
-}
-
-- (MOBaseNavivationViewController *)navigationController {
-    if (navigationController == nil) {
-        navigationController = [[MOBaseNavivationViewController alloc] initWithRootViewController:self];
-        self.navigationController = navigationController;
-    }
-
-    return navigationController;
+    MOAppDelegate *appDelegate = (MOAppDelegate *)[[UIApplication sharedApplication] delegate];
+    [appDelegate.tracker trackView:@"Liste gestion des abonnements"];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -78,8 +65,8 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil)
     {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
-                                       reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
+                                       reuseIdentifier:CellIdentifier];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
 
@@ -96,23 +83,17 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        [[MOAppDelegate sharedAppDelegate].subscriptionDocument deleteAtKey:[items objectAtIndex:indexPath.row]];
+        MOAppDelegate *appDelegate = (MOAppDelegate *)[[UIApplication sharedApplication] delegate];
+        [appDelegate.subscriptionDocument deleteAtKey:[items objectAtIndex:indexPath.row]];
 
-        [[MOAppDelegate sharedAppDelegate].tracker trackEventWithCategory:@"Bouton"
-                                                               withAction:@"Supprimer un abonnement"
-                                                                withLabel:[items objectAtIndex:indexPath.row]
-                                                                withValue:nil];
+        [appDelegate.tracker trackEventWithCategory:@"Bouton"
+                                         withAction:@"Supprimer un abonnement"
+                                          withLabel:[items objectAtIndex:indexPath.row]
+                                          withValue:nil];
 
         [items removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }
-}
-
-- (void)dealloc {
-    [navigationController release];
-    [_navigationController release];
-    [items release];
-    [super dealloc];
 }
 
 #pragma delegate

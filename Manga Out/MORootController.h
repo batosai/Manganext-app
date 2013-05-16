@@ -1,41 +1,27 @@
 //
 //  MORootController.h
-//  Manga Out
+//  Manga Next
 //
-//  Created by Jérémy chaufourier on 12/02/12.
-//  Copyright (c) 2012 Jérémy Chaufourier. All rights reserved.
+//  Created by Jeremy on 06/05/13.
+//  Copyright (c) 2013 Jeremy Chaufourier. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
+#import "AwesomeMenu.h"
 
-#import "MOTableViewController.h"
-#import "MOAppDelegate.h"
-//#import "MOSignetViewController.h"
-#import "MOSubscriptionDocument.h"
-#import "MOSubscriptionViewController.h"
-#import "MONavivationViewController.h"
-#import "IASKAppSettingsViewController.h"
-#import "MOBooks.h"
+@class MONavigationController;
 
-@interface MORootController : UITabBarController {
-    MOTableViewController *newBooksTableViewController;
-    MOTableViewController *futureBooksTableViewController;
-    //MOSignetViewController *signetViewController;
-    MOSubscriptionViewController *subscriptionTableViewController;
-    IASKAppSettingsViewController *appSettingsViewController;
-    
-    UISplitViewController *splitForNewBooksViewController;
-    UISplitViewController *splitForFutureBooksViewController;
-    
-    MOBooks *books;
+@interface MORootController : UIViewController<AwesomeMenuDelegate>{
+//    MOSignetViewController *signetViewController;
+
+    MONavigationController *navigationHomeController;
+    MONavigationController *navigationNewBooksController;
+    MONavigationController *navigationFutureBooksController;
+    MONavigationController *navigationSubscriptionController;
+    MONavigationController *navigationSignetController;
+    MONavigationController *navigationAppSettingsController;
+
+    AwesomeMenu *menu;
 }
-
-@property (nonatomic, retain) MONavivationViewController *freshBooksNavigationController;
-@property (nonatomic, retain) MONavivationViewController *futureBooksNavigationController;
-@property (nonatomic, retain) MONavivationViewController *subscriptionNavigationController;
-@property (nonatomic, retain) MONavivationViewController *settingsNavigationController;
-
-- (void)badgeValue:(NSUInteger) value;
-- (void)badgeRefresh;
 
 @end

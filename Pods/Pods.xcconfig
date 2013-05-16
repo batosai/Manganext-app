@@ -1,0 +1,9 @@
+ALWAYS_SEARCH_USER_PATHS = YES
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
+HEADER_SEARCH_PATHS = ${PODS_HEADERS_SEARCH_PATHS}
+LIBRARY_SEARCH_PATHS = "$(PODS_ROOT)/GoogleAnalytics-iOS-SDK/Library" "$(PODS_ROOT)/google-plus-ios-sdk/google-plus-ios-sdk-1.2.1/lib"
+OTHER_LDFLAGS = -ObjC -lGoogleAnalytics -lGooglePlusUniversal -lsqlite3.0 -framework Accounts -framework CFNetwork -framework CoreData -framework CoreGraphics -framework CoreLocation -framework MessageUI -framework MobileCoreServices -framework Security -framework SystemConfiguration -framework UIKit -weak_framework Accounts -weak_framework AdSupport -weak_framework Security -weak_framework Social
+PODS_BUILD_HEADERS_SEARCH_PATHS = "${PODS_ROOT}/BuildHeaders" "${PODS_ROOT}/BuildHeaders/AFIncrementalStore" "${PODS_ROOT}/BuildHeaders/AFNetworking" "${PODS_ROOT}/BuildHeaders/DEFacebookComposeViewController" "${PODS_ROOT}/BuildHeaders/EDColor" "${PODS_ROOT}/BuildHeaders/Facebook-iOS-SDK" "${PODS_ROOT}/BuildHeaders/Facebook-iOS-SDK/FacebookSDK" "${PODS_ROOT}/BuildHeaders/GoogleAnalytics-iOS-SDK" "${PODS_ROOT}/BuildHeaders/InAppSettingsKit" "${PODS_ROOT}/BuildHeaders/InflectorKit" "${PODS_ROOT}/BuildHeaders/MBProgressHUD" "${PODS_ROOT}/BuildHeaders/TransformerKit" "${PODS_ROOT}/BuildHeaders/google-plus-ios-sdk"
+PODS_HEADERS_SEARCH_PATHS = ${PODS_PUBLIC_HEADERS_SEARCH_PATHS}
+PODS_PUBLIC_HEADERS_SEARCH_PATHS = "${PODS_ROOT}/Headers" "${PODS_ROOT}/Headers/AFIncrementalStore" "${PODS_ROOT}/Headers/AFNetworking" "${PODS_ROOT}/Headers/DEFacebookComposeViewController" "${PODS_ROOT}/Headers/EDColor" "${PODS_ROOT}/Headers/Facebook-iOS-SDK" "${PODS_ROOT}/Headers/Facebook-iOS-SDK/FacebookSDK" "${PODS_ROOT}/Headers/GoogleAnalytics-iOS-SDK" "${PODS_ROOT}/Headers/InAppSettingsKit" "${PODS_ROOT}/Headers/InflectorKit" "${PODS_ROOT}/Headers/MBProgressHUD" "${PODS_ROOT}/Headers/TransformerKit" "${PODS_ROOT}/Headers/google-plus-ios-sdk"
+PODS_ROOT = ${SRCROOT}/Pods

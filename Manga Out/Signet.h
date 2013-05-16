@@ -6,13 +6,12 @@
 //  Copyright (c) 2012 Jérémy Chaufourier. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
 @class Book;
 
 @interface Signet : NSManagedObject
 
-@property (nonatomic, retain) Book *book;
+@property (nonatomic, strong) Book *book;
 
 @end

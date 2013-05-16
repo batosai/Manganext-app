@@ -8,29 +8,35 @@
 
 #import <UIKit/UIKit.h>
 #import <AudioToolbox/AudioToolbox.h>
+
 #import "GAI.h"
+#import "GPPDeepLink.h"
 
 @class MORootController, MOSubscriptionDocument;
+@class GTMOAuth2Authentication;
 
-@interface MOAppDelegate : UIResponder <UIApplicationDelegate, UITabBarControllerDelegate> {
+@interface MOAppDelegate : UIResponder <UIApplicationDelegate, GPPDeepLinkDelegate> {
     BOOL useIcloud;
 }
 
 @property (strong, nonatomic) UIWindow *window;
+@property (nonatomic, strong) id<GAITracker> tracker;
+@property (readonly, nonatomic) MORootController *rootController;
 
-@property (nonatomic, retain) id<GAITracker> tracker;
+#pragma CORE DATA
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
-@property (assign, nonatomic) MORootController *tabBarController;
-
-@property (readwrite, strong, nonatomic) MOSubscriptionDocument *subscriptionDocument;
-@property (strong) NSMetadataQuery *query;
-
-+ (MOAppDelegate *)sharedAppDelegate;
 
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
+#
+
+#pragma ICOULD
+@property (readwrite, strong, nonatomic) MOSubscriptionDocument *subscriptionDocument;
+@property (strong) NSMetadataQuery *query;
+
 - (void)loadSubscriptionDocument;
+#
 
 @end

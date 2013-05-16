@@ -1,0 +1,41 @@
+PODS:
+  - AFIncrementalStore (0.4.0):
+    - AFNetworking (>= 0.9.0)
+    - InflectorKit
+    - TransformerKit
+  - AFNetworking (1.2.1)
+  - DEFacebookComposeViewController (1.0.0):
+    - Facebook-iOS-SDK (~> 3.1)
+  - EDColor (0.2.0)
+  - Facebook-iOS-SDK (3.5.1)
+  - google-plus-ios-sdk (1.2.1)
+  - GoogleAnalytics-iOS-SDK (2.0beta4)
+  - InAppSettingsKit (1.1)
+  - InflectorKit (0.0.1)
+  - MBProgressHUD (0.6)
+  - TransformerKit (0.2.2)
+
+DEPENDENCIES:
+  - AFIncrementalStore (= 0.4.0)
+  - AFNetworking (~> 1.2.0)
+  - DEFacebookComposeViewController (~> 1.0.0)
+  - EDColor (~> 0.2.0)
+  - google-plus-ios-sdk (~> 1.2.1)
+  - GoogleAnalytics-iOS-SDK (~> 2.0beta4)
+  - InAppSettingsKit (~> 1.0)
+  - MBProgressHUD (~> 0.6)
+
+SPEC CHECKSUMS:
+  AFIncrementalStore: 71e6815601f999933193ca97beb8a225ee3204e1
+  AFNetworking: 616da0028916ce296f5c3cef74e5552eb4e10e13
+  DEFacebookComposeViewController: fa6c660420e5378944c758597910f67a5d21b993
+  EDColor: ed4dec30508a1443971ba4148ed2ba9fdde45bc5
+  Facebook-iOS-SDK: 0dbd897e842cefeb012ec2eb8eba659ba6b96b12
+  google-plus-ios-sdk: fd312bf0eed88cfc708fe2cdcb9c1084598af99e
+  GoogleAnalytics-iOS-SDK: ae8e58e771b6dec84c0047154cc0e550a15e6f54
+  InAppSettingsKit: cf2c4193c3269d6acf996f7975f310d18a5e1e3c
+  InflectorKit: 9dccab02f95541093995adac639342c9eb9e6c12
+  MBProgressHUD: 9b55a90566fb5d07df0602f6fd9fa04510ad5d52
+  TransformerKit: c07d1de4a661db2ca420092445750ab4ad67331a
+
+COCOAPODS: 0.19.1

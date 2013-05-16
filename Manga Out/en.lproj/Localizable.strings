@@ -1,8 +1,11 @@
 "Nouveautes" = "New";
 "Prochainement" = "Planning";
-"Mes selections" = "Bookmarks";
+"Liste d'achat" = "Shopping list";
 "Ma liste" = "My list";
 "Parametres" = "Settings";
+
+"Suivre cette série" = "Follow this serie";
+"Ajouter à ma shopping list" = "Add in shoppong list";
 
 "Aucune sélèction" = "No data";
 "Aucune sortie" = "No data";
@@ -18,3 +21,7 @@
 "Supprimer" = "Delete";
 
 "Recherche" = "Search";
+
+"Bonjour, %@ %@ vient de sortir" = "Hello, %@ %@ is out";
+"Bonjour, %@ %@ sort le %@" = "Hello, %@ %@ available on %@";
+"Bonjour, %@ %@ est sorti le %@" = "Hello, %@ %@ was released on %@";

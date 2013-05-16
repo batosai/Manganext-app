@@ -8,25 +8,22 @@
 
 #import <UIKit/UIKit.h>
 #import <iAd/iAd.h>
+#import <MessageUI/MessageUI.h>
+#import <MessageUI/MFMessageComposeViewController.h>
 #import "MOAppDelegate.h"
+#import "AwesomeMenu.h"
+#import "GPPShare.h"
 
-#import "Book.h"
-//#import "Signet.h"
+@class MOViewDetail;
+@class Book, Signet;
 
-
-@interface MODetailViewController : UIViewController <ADBannerViewDelegate> {
-    UILabel *labelName;
-    UILabel *labelNumber;
-    UILabel *labelDate;
-    UILabel *labelEditor;
-    UILabel *labelAuthor;
-    UILabel *labelState;
-    UILabel *labelPrice;
-    UIImageView *imageView;
-    UITextView *description;
+@interface MODetailViewController : UIViewController <ADBannerViewDelegate, UIActionSheetDelegate, MFMessageComposeViewControllerDelegate, AwesomeMenuDelegate, GPPShareDelegate> {
 
     BOOL bannerIsVisible;
     ADBannerView *bannerView;
+
+    MOViewDetail *view;
+    AwesomeMenu *menu;
 }
 
 @property (strong, nonatomic) Book *book;

@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "MOAppDelegate.h"
 
 @interface MOSubscriptionManagementViewController : UITableViewController
 

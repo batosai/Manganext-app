@@ -7,14 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Book.h"
+
+@class Book;
 
 @interface MOViewCell : UITableViewCell {
-    UILabel *label;
-    UILabel *subLabel;
     UILabel *subLabelDate;
 }
 
-- (void)setValuesWithBook:(Book*) book;
+@property (weak, nonatomic, readwrite) Book *book;
 
 @end

@@ -17,9 +17,8 @@
 {
     if ([contents length] > 0) {
         NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:contents];
-        _dictionary = [[unarchiver decodeObjectForKey:@"subscriptions"] retain];
+        _dictionary = [unarchiver decodeObjectForKey:@"subscriptions"];
         [unarchiver finishDecoding];
-        [unarchiver release];
     } else {
         _dictionary = [NSMutableDictionary dictionary];
     }
@@ -39,7 +38,6 @@
     NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
     [archiver encodeObject:_dictionary forKey:@"subscriptions"];
     [archiver finishEncoding];
-    [archiver release];
 
     return data;
 }
