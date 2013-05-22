@@ -122,10 +122,11 @@
 		3FB0A066162AD7910099E437 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB0A063162AD7910099E437 /* Default.png */; };
 		3FB0A067162AD7910099E437 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FB0A064162AD7910099E437 /* Default@2x.png */; };
 		3FC1B4AC152CDDC200409091 /* manga-out.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3FC1B4AA152CDDC200409091 /* manga-out.xcdatamodeld */; };
-		3FDC738C1673B533005B17C4 /* MigrationV1.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = 3FDC738B1673B533005B17C4 /* MigrationV1.xcmappingmodel */; };
 		3FDF505A172F255500E7DCD3 /* MODetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F67D59615211C8200B7F6AA /* MODetailViewController.m */; };
 		3FEAB961162CB94700770B43 /* Placeholder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FEAB95F162CB94700770B43 /* Placeholder@2x.png */; };
 		3FEAB962162CB94700770B43 /* Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3FEAB960162CB94700770B43 /* Placeholder.png */; };
+		3FFC25EC174D782D00187DC0 /* MigrationV2.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = 3FFC25EB174D782D00187DC0 /* MigrationV2.xcmappingmodel */; };
+		3FFC25EE174D793500187DC0 /* MigrationV1.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = 3FFC25ED174D793500187DC0 /* MigrationV1.xcmappingmodel */; };
 		3FFF644616E6951D00CE7BA1 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FFF644516E6951D00CE7BA1 /* SystemConfiguration.framework */; };
 /* End PBXBuildFile section */
 
@@ -285,11 +286,13 @@
 		3FB0A064162AD7910099E437 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		3FC1B4AB152CDDC200409091 /* manga-out.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "manga-out.xcdatamodel"; sourceTree = "<group>"; };
 		3FDC737A1673ACE0005B17C4 /* manga-out 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "manga-out 2.xcdatamodel"; sourceTree = "<group>"; };
-		3FDC738B1673B533005B17C4 /* MigrationV1.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = MigrationV1.xcmappingmodel; sourceTree = "<group>"; };
 		3FE0BF8316CADB260077AE90 /* MOSubscriptionManagementViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MOSubscriptionManagementViewController.h; sourceTree = "<group>"; };
 		3FE0BF8416CADB260077AE90 /* MOSubscriptionManagementViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MOSubscriptionManagementViewController.m; sourceTree = "<group>"; };
 		3FEAB95F162CB94700770B43 /* Placeholder@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Placeholder@2x.png"; sourceTree = "<group>"; };
 		3FEAB960162CB94700770B43 /* Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Placeholder.png; sourceTree = "<group>"; };
+		3FFC25E0174D669300187DC0 /* manga-out 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = file; path = "manga-out 3.xcdatamodel"; sourceTree = "<group>"; };
+		3FFC25EB174D782D00187DC0 /* MigrationV2.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = MigrationV2.xcmappingmodel; sourceTree = "<group>"; };
+		3FFC25ED174D793500187DC0 /* MigrationV1.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = MigrationV1.xcmappingmodel; sourceTree = "<group>"; };
 		3FFF644516E6951D00CE7BA1 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		492D5A926DA44A1CB233ACF4 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC596122B7894B56BE047031 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = SOURCE_ROOT; };
@@ -659,7 +662,8 @@
 		3FDC73781673AB69005B17C4 /* Migrations */ = {
 			isa = PBXGroup;
 			children = (
-				3FDC738B1673B533005B17C4 /* MigrationV1.xcmappingmodel */,
+				3FFC25ED174D793500187DC0 /* MigrationV1.xcmappingmodel */,
+				3FFC25EB174D782D00187DC0 /* MigrationV2.xcmappingmodel */,
 			);
 			name = Migrations;
 			sourceTree = "<group>";
@@ -692,7 +696,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0460;
-				ORGANIZATIONNAME = "J√©r√©my Chaufourier";
+				ORGANIZATIONNAME = "Jérémy Chaufourier";
 			};
 			buildConfigurationList = 3F397E9B14E82DDF00EFCC2B /* Build configuration list for PBXProject "Manga Next" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -842,7 +846,6 @@
 				3F24EC3A1517E92400EB9922 /* Book.m in Sources */,
 				3FC1B4AC152CDDC200409091 /* manga-out.xcdatamodeld in Sources */,
 				3F878A1415D060A3003E6835 /* MOAPIClient.m in Sources */,
-				3FDC738C1673B533005B17C4 /* MigrationV1.xcmappingmodel in Sources */,
 				3F7BF3DC17233B71007E692F /* MOIncrementalStore.m in Sources */,
 				3F23287B17385405005DBF58 /* AwesomeMenu.m in Sources */,
 				3F23287C17385405005DBF58 /* AwesomeMenuItem.m in Sources */,
@@ -852,6 +855,8 @@
 				3F9B2772173B074300A01680 /* MOSignetViewController.m in Sources */,
 				3F9B2778173B0C1500A01680 /* MOHomeViewController.m in Sources */,
 				3F9B27D917418B9B00A01680 /* MOViewDetail.m in Sources */,
+				3FFC25EC174D782D00187DC0 /* MigrationV2.xcmappingmodel in Sources */,
+				3FFC25EE174D793500187DC0 /* MigrationV1.xcmappingmodel in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1077,10 +1082,11 @@
 		3FC1B4AA152CDDC200409091 /* manga-out.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				3FFC25E0174D669300187DC0 /* manga-out 3.xcdatamodel */,
 				3FDC737A1673ACE0005B17C4 /* manga-out 2.xcdatamodel */,
 				3FC1B4AB152CDDC200409091 /* manga-out.xcdatamodel */,
 			);
-			currentVersion = 3FDC737A1673ACE0005B17C4 /* manga-out 2.xcdatamodel */;
+			currentVersion = 3FFC25E0174D669300187DC0 /* manga-out 3.xcdatamodel */;
 			path = "manga-out.xcdatamodeld";
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

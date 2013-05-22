@@ -24,6 +24,7 @@
 @dynamic image_version;
 @dynamic image;
 @dynamic price;
+@dynamic website;
 @dynamic published_at;
 @dynamic updated_at;
 @dynamic created_at;
@@ -200,7 +201,7 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@: %p, \"uid\": \"%@\", \"name\": \"%@\", \"edithor_name\": \"%@\", \"author_name\": \"%@\", \"text\": \"%@\", \"state\": \"%@\", \"image_src\": \"%@\", \"image_src\": \"%@\", \"image_version\": \"%@\", \"price\": \"%@\", \"published_at\": \"%@\">", NSStringFromClass([self class]), self, self.uid, self.name, self.editor_name, self.author_name, self.text, self.state, self.image_src, self.image, self.image_version, self.price, self.published_at];
+    return [NSString stringWithFormat:@"<%@: %p, \"uid\": \"%@\", \"name\": \"%@\", \"edithor_name\": \"%@\", \"author_name\": \"%@\", \"text\": \"%@\", \"state\": \"%@\", \"image_src\": \"%@\", \"image_src\": \"%@\", \"image_version\": \"%@\", \"price\": \"%@\", \"website\": \"%@\", \"published_at\": \"%@\">", NSStringFromClass([self class]), self, self.uid, self.name, self.editor_name, self.author_name, self.text, self.state, self.image_src, self.image, self.image_version, self.price, self.website, self.published_at];
 }
 
 

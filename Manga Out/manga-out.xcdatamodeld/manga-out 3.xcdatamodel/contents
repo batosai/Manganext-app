@@ -15,13 +15,14 @@
         <attribute name="text" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="uid" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="updated_at" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="website" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="signet" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Signet" inverseName="book" inverseEntity="Signet" syncable="YES"/>
     </entity>
     <entity name="Signet" representedClassName="Signet" syncable="YES">
         <relationship name="book" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Book" inverseName="signet" inverseEntity="Book" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Book" positionX="160" positionY="192" width="128" height="270"/>
+        <element name="Book" positionX="160" positionY="192" width="128" height="285"/>
         <element name="Signet" positionX="423" positionY="192" width="128" height="60"/>
     </elements>
 </model>

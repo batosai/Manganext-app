@@ -74,9 +74,6 @@
 
         [self.view addSubview:bannerView];
     }
-
-    if (!menu)
-        [self awesomeMenu];
 }
 
 - (NSUInteger)supportedInterfaceOrientations
@@ -100,7 +97,7 @@
         [appDelegate.tracker trackView:[NSString stringWithFormat:@"Detail manga : %@", _book.name]];
 
         view.book = _book;
-
+#warning TODO FB et twitter ne pas mettre "Bonjour,"
         if ([[NSDate date] isSameDay:_book.published_at]) {
             bodyString = [NSString stringWithFormat:NSLocalizedString(@"Bonjour, %@ %@ vient de sortir", nil), _book.name, _book.number];
         }
@@ -132,7 +129,8 @@
     self.navigationItem.rightBarButtonItem = addButtonItem;
 
     [GPPShare sharedInstance].delegate = self;
-    
+
+    [self awesomeMenu];
 
 //    if (_book.signet == nil) {
 //        UIBarButtonItem *addButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addSignet:)] autorelease];
@@ -199,7 +197,7 @@
                                                destructiveButtonTitle:nil
                                                     otherButtonTitles:NSLocalizedString(@"Suivre cette série", nil), NSLocalizedString(@"Ajouter à ma shopping list", nil), nil];
 
-    actionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+    actionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
     [actionSheet showInView:self.view];
 }
 
@@ -261,9 +259,9 @@
 
     // optional
     [facebookViewComposer addImage:[UIImage imageNamed:@"icn"]];
-    // and/or
-    // optional
-    //[facebookViewComposer addURL:[NSURL URLWithString:_book.website]];
+
+    if (_book.website)
+        [facebookViewComposer addURL:[NSURL URLWithString:_book.website]];
 
     [facebookViewComposer setCompletionHandler:^(DEFacebookComposeViewControllerResult result) {
         switch (result) {
@@ -306,12 +304,18 @@
     [tweetView setInitialText:bodyString];
     [tweetView addImage:[UIImage imageNamed:@"icn"]];
     [tweetView addURL:[NSURL URLWithString:@"http://www.chaufourier.fr" ]];
+
+    if (_book.website)
+        [tweetView addURL:[NSURL URLWithString:_book.website]];
+
     [self presentModalViewController:tweetView animated:YES];
 }
 
 - (void)googleplus {
     id<GPPShareBuilder> shareBuilder = [[GPPShare sharedInstance] shareDialog];
-    [shareBuilder setURLToShare:[NSURL URLWithString:@"http://www.chaufourier.fr"]];
+
+    if (_book.website)
+        [shareBuilder setURLToShare:[NSURL URLWithString:_book.website]];
 
     /*[shareBuilder setContentDeepLinkID:@""];
     [shareBuilder setTitle:kSubject
@@ -322,18 +326,30 @@
 }
 
 - (void)mail {
+
+    NSString *message = bodyString;
+    if (_book.website) {
+        message = [NSString stringWithFormat:@"%@\n\n%@", message, _book.website];
+    }
+
     NSString *mailString = [NSString stringWithFormat:@"mailto:?subject=%@&body=%@",
                             [kSubject stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding],
-                            [bodyString stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
+                            [message stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:mailString]];
 }
 
 - (void)iMessage {
 #if !TARGET_IPHONE_SIMULATOR
+
+    NSString *message = bodyString;
+    if (_book.website) {
+        message = [NSString stringWithFormat:@"%@\n\n%@", message, _book.website];
+    }
+
     MFMessageComposeViewController *picker = [[MFMessageComposeViewController alloc] init];
     picker.messageComposeDelegate = self;
 
-    picker.body = bodyString;
+    picker.body = message;
 
     [self presentModalViewController:picker animated:YES];
 #endif

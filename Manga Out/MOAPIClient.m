@@ -117,6 +117,7 @@
     [mutablePropertyValues setValue:[NSNumber numberWithInt:[representation[@"image_version"] intValue]] forKey:@"image_version"];
     [mutablePropertyValues setValue:representation[@"image"] forKey:@"image"];
     [mutablePropertyValues setValue:[NSNumber numberWithFloat: [representation[@"price"] floatValue]] forKey:@"price"];
+    [mutablePropertyValues setValue:representation[@"website"] forKey:@"website"];
     [mutablePropertyValues setValue:AFDateFromISO8601String(representation[@"published_at"]) forKey:@"published_at"];
     [mutablePropertyValues setValue:AFDateFromISO8601String(representation[@"updated_at"]) forKey:@"updated_at"];
     [mutablePropertyValues setValue:AFDateFromISO8601String(representation[@"created_at"]) forKey:@"created_at"];

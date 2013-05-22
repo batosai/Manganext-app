@@ -25,6 +25,7 @@
 @property (nonatomic, strong) NSNumber * image_version;
 @property (nonatomic, strong) NSString * image;
 @property (nonatomic, strong) NSNumber * price;
+@property (nonatomic, strong) NSString * website;
 @property (nonatomic, strong) NSDate * published_at;
 @property (nonatomic, strong) NSDate * updated_at;
 @property (nonatomic, strong) NSDate * created_at;
